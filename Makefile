@@ -1,17 +1,19 @@
 CXX = clang++
-CXXFLAGS = -std=c++17 -O2 -Wall -Wextra -Wno-write-strings -Wno-unused-variable -Wno-deprecated-copy -Wno-unused-parameter -Wno-sign-compare -Wno-strict-aliasing -Wno-unused-but-set-variable -funroll-loops -ftree-vectorize -fstrict-aliasing -fno-semantic-interposition -fno-trapping-math -fassociative-math -fopenmp -march=armv8-a+simd
+CXXFLAGS = -std=c++17 -O3 -Wall -Wextra -march=armv8-a+simd -mtune=cortex-a78
+LDFLAGS = 
 
-SRCS = Cyclone.cpp Int.cpp IntGroup.cpp IntMod.cpp Point.cpp Random.cpp SECP256K1.cpp Timer.cpp sha256_portable.cpp ripemd160_portable.cpp crc32_portable.cpp
-OBJS = $(SRCS:.cpp=.o)
-TARGET = cyclone-arm
+SRC = src/main.cpp src/cyclone.cpp src/int.cpp src/util.cpp src/sha256_portable.cpp
+OBJ = $(SRC:.cpp=.o)
+
+TARGET = cyclone_arm
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+$(TARGET): $(OBJ)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -Iinclude -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJ) $(TARGET)
